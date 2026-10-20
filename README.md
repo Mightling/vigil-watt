@@ -1,8 +1,10 @@
-# VigilWatt
+# VigilWatt（二改版）
 
 > Windows 无线外设电量监控 —— 蓝牙耳机、2.4G 键鼠手柄、笔记本电池，一个托盘图标看全部电量。
+>
+> 本仓库是基于 [YGWG-LX / vigil-watt](https://gitee.com/YGWG-LX/vigil-watt) 的二次修改版，新增了 MCHOSE 鼠标、PMO Wave 75 键盘、VGN 蜻蜓 F1 鼠标的电量支持，以及若干 UI 与稳定性改进。二改：[@川奈](https://github.com/Mightling)。
 
-![Platform](https://img.shields.io/badge/Windows-10%2F11-0078d4) ![.NET](https://img.shields.io/badge/.NET-8-512bd4) ![License](https://img.shields.io/badge/license-MIT-green) ![Release](https://img.shields.io/badge/release-v1.0.11-blue)
+![Platform](https://img.shields.io/badge/Windows-10%2F11-0078d4) ![.NET](https://img.shields.io/badge/.NET-8-512bd4) ![License](https://img.shields.io/badge/license-MIT-green)
 
 ## 为什么做这个
 
@@ -43,12 +45,23 @@ Windows 看不到 2.4G 鼠标的电量——游戏打得正激烈时突然提示
 
 ## 下载
 
-[Gitee Releases 页面](https://gitee.com/YGWG-LX/vigil-watt/releases) 或本地 `dist/`：
+[GitHub Releases 页面](https://github.com/Mightling/vigil-watt/releases)：
 
-- `VigilWattApp-win-Setup.exe`（44 MB，含 Velopack 自动更新）—— **推荐**
-- `VigilWattApp-win-Portable.zip`（37 MB，免安装）
+- `VigilWatt-win-x64.zip`（65 MB，免安装，解压双击 `VigilWatt.App.exe`）
 
-self-contained，**无需安装 .NET 运行时**。`publish/` 目录里另有解压即用的 self-contained 版。
+self-contained，**无需安装 .NET 运行时**。注意 WinUI 3 必须以整个目录运行，**不要只拷 `VigilWatt.App.exe` 单个文件**。
+
+## 本二改版新增
+
+相比上游，本仓库额外新增：
+
+| 品牌 / 设备 | 通道 | 状态 |
+|---|---|---|
+| MCHOSE 鼠标（A5/AX5 Pro、旧 A7、/gmouse、Hub 新世代） | 2.4G · 四套私有协议 | ✅ 真机验证（A7 Pro） |
+| PMO Wave 75 键盘 | 2.4G · raw HID 会话协议（pmohub 逆向） | ✅ 真机验证 |
+| VGN 蜻蜓 F1 V5 鼠标 | 2.4G · `vgn-kc2` 配置帧（V HUB 逆向） | ✅ 真机验证（有线/无线双路） |
+
+以及：重复设备去重、设备右键删除、任务栏自定义显示设备、关于页二改署名、PMO 休眠不熔断、日志刷屏修复。详见 [更新日志](CHANGELOG.md)。
 
 ## 快速上手
 
@@ -117,4 +130,4 @@ assets/                   # README 截图
 
 ## 许可证
 
-[MIT](LICENSE) © 2026 evren
+[MIT](LICENSE) © 2026 evren（上游）；本二改版同样遵循 MIT。
