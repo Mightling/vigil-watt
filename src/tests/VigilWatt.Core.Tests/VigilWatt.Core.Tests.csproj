@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>VigilWatt.Core.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!-- HistoryStore 的删除/统计逻辑要真跑 SQLite（DELETE 不还空间、VACUUM 不丢数据这类行为只有真库能验） -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+  </ItemGroup>
+
+  <!--
+    直接链接被验证的源文件，测的是真代码，不是复制品。
+    这些文件都刻意做成零依赖的纯逻辑，所以能脱离 WinRT 单独编译——
+    正因如此这里用 <Compile Include> 而不是 ProjectReference：Core 的目标框架是
+    net8.0-windows10.0.19041.0，本测试项目保持纯净的 net8.0（AnyCPU），
+    不引入 Windows SDK / WinRT 依赖。改这些源文件后必须重跑测试。
+
+    HistoryStore 能进这个项目，是因为它虽然碰 SQLite，但不碰 WinRT：
+    依赖只有 Microsoft.Data.Sqlite + AppPaths + Log + DeviceStatus（全是纯 .NET）。
+    它靠 HistoryStore(dbPath) 的可选构造参数指向临时库，测试因此不碰真实 history.db。
+  -->
+  <ItemGroup>
+    <Compile Include="..\..\VigilWatt.Core\Plugins\BatteryReadingFilter.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\PluginUtils.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\DeviceClaimRegistry.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\OfflinePolicy.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\WriteBackoff.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\Mchose\MchoseV1Codec.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\Mchose\MchoseMouseCodec.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\Pmo\PmoCodec.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\Vgn\VgnCodec.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\Rapoo\RapooCodec.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\Betop\BetopCodec.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Plugins\Logitech\HidppCodec.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Ble\ClassicDeviceName.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Ble\WatcherProps.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Models\DeviceKind.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Models\DeviceKindGuesser.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Models\ClassicDeviceKindResolver.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Models\DeviceSourceInfo.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Models\DeviceStatus.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Models\DeviceStatusFormatter.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Models\ChargingStateMap.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Devices\DeviceStatusMerger.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Devices\DeviceChangeDetector.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Power\SystemPowerReader.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Power\SystemBatteryWatcher.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Storage\HistoryStore.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Utils\AppPaths.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Utils\ByteSize.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Utils\Log.cs" />
+    <Compile Include="..\..\VigilWatt.Core\Utils\LogLevel.cs" />
+    <!-- 小组件 OS 能力判定也是零依赖纯逻辑，链接真源文件而非复制 -->
+    <Compile Include="..\..\VigilWatt.App\Services\WidgetCompat.cs" />
+    <!-- 任务栏贴片的定位数学与取值收敛同样是零依赖纯逻辑（只碰 int/Math），定位算错必须能在单测里复现 -->
+    <Compile Include="..\..\VigilWatt.App\Services\TaskbarLayout.cs" />
+    <Compile Include="..\..\VigilWatt.App\Services\TaskbarBatteryMode.cs" />
+    <Compile Include="..\VigilWatt.ProtocolCapture\CaptureRecord.cs" />
+    <Compile Include="..\VigilWatt.ProtocolCapture\CaptureRecordFactory.cs" />
+    <Compile Include="..\VigilWatt.ProtocolCapture\UsbCaptureReader.cs" />
+  </ItemGroup>
+
+</Project>

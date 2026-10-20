@@ -1,0 +1,16 @@
+bin/
+obj/
+*.user
+.vs/
+# 发布产物（仓库根 publish/）；规则无前导斜杠，任意层级名为 publish 的目录都忽略
+publish/
+# 安装包产物（scripts/build-installer.ps1 输出：Setup.exe + RELEASES + nupkg）
+dist/
+# GitHub PAT（scripts/publish-github.ps1 读取），绝不入库
+.vpk-github-token
+*.log
+
+# 工具 / 助手元数据目录（不入库）
+.workbuddy/
+.workbuddy-ai/
+.zcode/

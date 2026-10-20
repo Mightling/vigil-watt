@@ -1,0 +1,49 @@
+<Application
+    x:Class="VigilWatt.App.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- 字体钉死 Segoe UI：Win10 没有 Segoe UI Variable，用默认字体会宽 5~8% 导致排版走样（见 dev/runtime-pitfalls.md §13） -->
+            <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI</FontFamily>
+            <FontFamily x:Key="TextControlThemeFontFamily">Segoe UI</FontFamily>
+
+            <!-- 卡片统一语言：各页共用，避免各自重复写四条属性走样 -->
+            <Style x:Key="AppCardStyle" TargetType="Border">
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+            </Style>
+
+            <!-- 指标卡比通用卡片紧凑，四张并排时留白要收着 -->
+            <Style x:Key="AppKpiCardStyle" TargetType="Border" BasedOn="{StaticResource AppCardStyle}">
+                <Setter Property="Padding" Value="14,10" />
+            </Style>
+
+            <Style x:Key="AppPageTitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
+            <Style x:Key="AppPageSubtitleStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            </Style>
+
+            <Style x:Key="AppCardLabelStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            </Style>
+            <Style x:Key="AppCardFootnoteStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorTertiaryBrush}" />
+                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

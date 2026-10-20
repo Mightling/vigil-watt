@@ -1,0 +1,130 @@
+<Page
+    x:Class="VigilWatt.App.Views.HistoryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:v="using:VigilWatt.App.ViewModels">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="20,16" RowSpacing="12">
+
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                <TextBlock Text="历史管理" Style="{StaticResource AppPageTitleStyle}" />
+                <TextBlock x:Name="SubtitleText" Text="—" Style="{StaticResource AppPageSubtitleStyle}" />
+            </StackPanel>
+            <Button x:Name="RefreshButton" Grid.Column="1" Click="Refresh_Click" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon FontSize="14" Glyph="&#xE72C;" />
+                    <TextBlock Text="刷新" />
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- 操作结果提示（删除成功 / 失败） -->
+        <InfoBar x:Name="ResultBar" Grid.Row="1" IsOpen="False" />
+
+        <!-- 概览卡片 -->
+        <Grid Grid.Row="2" ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource AppKpiCardStyle}">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="数据库大小" Style="{StaticResource AppCardLabelStyle}" />
+                    <TextBlock x:Name="KpiFileSize" Text="—" FontSize="24" FontWeight="Bold" />
+                    <TextBlock Text="history.db" Style="{StaticResource AppCardFootnoteStyle}" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource AppKpiCardStyle}">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="采样总条数" Style="{StaticResource AppCardLabelStyle}" />
+                    <TextBlock x:Name="KpiTotal" Text="—" FontSize="24" FontWeight="Bold" />
+                    <TextBlock Text="全部设备合计" Style="{StaticResource AppCardFootnoteStyle}" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource AppKpiCardStyle}">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="设备数" Style="{StaticResource AppCardLabelStyle}" />
+                    <TextBlock x:Name="KpiDevices" Text="—" FontSize="24" FontWeight="Bold" />
+                    <TextBlock Text="含已离线的历史设备" Style="{StaticResource AppCardFootnoteStyle}" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="3" Style="{StaticResource AppKpiCardStyle}">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="最早记录" Style="{StaticResource AppCardLabelStyle}" />
+                    <TextBlock x:Name="KpiEarliest" Text="—" FontSize="24" FontWeight="Bold" />
+                    <TextBlock x:Name="KpiEarliestSub" Text="—" Style="{StaticResource AppCardFootnoteStyle}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- 按设备清理 -->
+        <Border Grid.Row="3" Style="{StaticResource AppCardStyle}" Padding="16,14">
+            <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
+
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                    <TextBlock Text="按设备清理" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="勾选后可批量删除，删除不可恢复" FontSize="12"
+                               VerticalAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                </Grid>
+
+                <ListView x:Name="DeviceList" Grid.Row="1" SelectionMode="None">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="MinHeight" Value="0" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="v:HistoryDeviceRow">
+                            <Border BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                    BorderThickness="0,0,0,1">
+                                <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="12" Padding="0,6">
+                                    <!-- CheckBox 默认 MinWidth=120，不归零会在名字前留一大段空白 -->
+                                    <CheckBox Grid.Column="0" MinWidth="0" Tag="{x:Bind DeviceId}"
+                                              Checked="Row_CheckChanged" Unchecked="Row_CheckChanged" />
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" FontSize="14"
+                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Grid.Column="2" Text="{x:Bind CountText}" FontSize="12" Width="76"
+                                               TextAlignment="Right" VerticalAlignment="Center"
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                    <TextBlock Grid.Column="3" Text="{x:Bind RangeText}" FontSize="12" Width="170"
+                                               TextAlignment="Right" VerticalAlignment="Center"
+                                               Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                                    <Button Grid.Column="4" Content="删除" FontSize="12" Tag="{x:Bind DeviceId}"
+                                            Click="DeleteRow_Click" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <StackPanel x:Name="EmptyState" Grid.Row="1" HorizontalAlignment="Center"
+                            VerticalAlignment="Center" Spacing="6" Visibility="Collapsed">
+                    <FontIcon Glyph="&#xE9D2;" FontSize="34" HorizontalAlignment="Center"
+                              Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                    <TextBlock Text="暂无历史数据" FontSize="15" HorizontalAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <TextBlock Text="采集到电量读数后会出现在这里" FontSize="12" HorizontalAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                </StackPanel>
+
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+                    <TextBlock x:Name="SelectionText" VerticalAlignment="Center" FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <Button x:Name="DeleteSelectedButton" Grid.Column="1" IsEnabled="False"
+                            Click="DeleteSelected_Click" Content="删除选中设备的历史" />
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

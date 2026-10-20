@@ -1,0 +1,61 @@
+{
+  "receivers": [
+    { "pid": "C52B", "family": "unifying", "maxSlots": 6, "reportPreference": "short" },
+    { "pid": "C532", "family": "unifying", "maxSlots": 6, "reportPreference": "short" },
+    { "pid": "C517", "family": "27mhz", "maxSlots": 4, "reportPreference": "short" },
+    { "pid": "C518", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C51A", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C51B", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C521", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C525", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C526", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C52E", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C52F", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C531", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C534", "family": "nano", "maxSlots": 2, "reportPreference": "short" },
+    { "pid": "C537", "family": "nano", "maxSlots": 2, "reportPreference": "short" },
+    { "pid": "C542", "family": "nano", "maxSlots": 1, "reportPreference": "short" },
+    { "pid": "C539", "family": "lightspeed", "maxSlots": 1, "reportPreference": "long" },
+    { "pid": "C53A", "family": "lightspeed", "maxSlots": 1, "reportPreference": "long" },
+    { "pid": "C53D", "family": "lightspeed", "maxSlots": 1, "reportPreference": "long" },
+    { "pid": "C53F", "family": "lightspeed", "maxSlots": 1, "reportPreference": "long" },
+    { "pid": "C541", "family": "lightspeed", "maxSlots": 1, "reportPreference": "long" },
+    { "pid": "C545", "family": "lightspeed", "maxSlots": 1, "reportPreference": "long" },
+    { "pid": "C547", "family": "lightspeed", "maxSlots": 1, "reportPreference": "long" },
+    { "pid": "C548", "family": "bolt", "maxSlots": 6, "reportPreference": "long" }
+  ],
+  "voltageCurves": {
+    "defaultLithium": [
+      { "mv": 4186, "pct": 100 },
+      { "mv": 4067, "pct": 90 },
+      { "mv": 3989, "pct": 80 },
+      { "mv": 3922, "pct": 70 },
+      { "mv": 3859, "pct": 60 },
+      { "mv": 3811, "pct": 50 },
+      { "mv": 3778, "pct": 40 },
+      { "mv": 3751, "pct": 30 },
+      { "mv": 3717, "pct": 20 },
+      { "mv": 3671, "pct": 10 },
+      { "mv": 3646, "pct": 5 },
+      { "mv": 3579, "pct": 2 },
+      { "mv": 3500, "pct": 0 }
+    ],
+    "adcLithium": [
+      { "mv": 4030, "pct": 100 },
+      { "mv": 3951, "pct": 90 },
+      { "mv": 3828, "pct": 80 },
+      { "mv": 3762, "pct": 70 },
+      { "mv": 3716, "pct": 60 },
+      { "mv": 3677, "pct": 50 },
+      { "mv": 3643, "pct": 40 },
+      { "mv": 3611, "pct": 30 },
+      { "mv": 3579, "pct": 20 },
+      { "mv": 3546, "pct": 10 },
+      { "mv": 3499, "pct": 5 },
+      { "mv": 3399, "pct": 0 }
+    ]
+  },
+  "defaultCurve": "defaultLithium",
+  "adcCurve": "adcLithium",
+  "wpidCurves": {}
+}

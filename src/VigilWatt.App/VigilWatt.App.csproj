@@ -1,0 +1,79 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <!-- Windows App SDK 1.7+ 要求显式钉住 Windows.SDK.NET.Ref，否则 MSB 直接失败 -->
+    <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
+    <RootNamespace>VigilWatt.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- 版本号单一来源：打包脚本 scripts/build-installer.ps1 从发布 exe 的 FileVersion 读取 -->
+    <Version>1.2.0</Version>
+    <Authors>ACoolOctober</Authors>
+    <Company>ACoolOctober</Company>
+    <Product>VigilWatt</Product>
+    <Copyright>Copyright (c) 2026 ACoolOctober &lt;2021187335@qq.com&gt;</Copyright>
+    <AssemblyTitle>Windows 无线外设电量监控</AssemblyTitle>
+    <Description>Windows 无线外设电量监控</Description>
+    <Platforms>x64</Platforms>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <UseWinUI>true</UseWinUI>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <!-- Release 下 WinRT AOT 源生成器（WinRTAotSourceGenerator）产出的 WinRTGenericInstantiation.g.cs
+         含 unsafe 代码，不开此项会 CS0227 + XamlCompiler MSB3073；Debug 不启用该生成器故不报错 -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- 非打包部署：直接跑 exe，无需 MSIX -->
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <!-- 关掉 XAML 自动生成的 Main：Program.cs 里自定义入口要先跑 VelopackApp.Build().Run()（安装/更新/卸载钩子），必须早于一切 UI -->
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <!-- 程序图标：写进 exe 的 Win32 资源（资源管理器/任务栏/Alt-Tab 用），
+         源文件 scripts/make-app-icon.py 可重新生成 -->
+    <ApplicationIcon>Assets\VigilWatt.ico</ApplicationIcon>
+    <!-- 只保留中英文 MUI 资源（分号包裹、小写），其余 80+ 语言目录由下方 Target 剔除 -->
+    <MuiLanguagesToKeep>;en-us;zh-cn;zh-tw;</MuiLanguagesToKeep>
+  </PropertyGroup>
+
+  <!--
+    WindowsAppSDKSelfContained 会把 WindowsAppRuntime MSIX 里全部 88 种语言的 .mui 拷进输出目录。
+    在 AddMicrosoftWindowsAppSDKPayloadFiles 之前把非白名单语言塞进官方排除口
+    MicrosoftWindowsAppSDKFilesExcluded（见 Microsoft.WindowsAppSDK.SelfContained.targets）。
+    白名单见 MuiLanguagesToKeep，与下方 _MuiKeep 的显式路径保持一致（目录名区分大小写随包内原样）。
+  -->
+  <Target Name="TrimWinUiMuiLanguages" BeforeTargets="AddMicrosoftWindowsAppSDKPayloadFiles">
+    <ItemGroup>
+      <_MuiAll Include="$(MicrosoftWindowsAppSDKMsixContent)\**\*.mui" />
+      <_MuiKeep Include="$(MicrosoftWindowsAppSDKMsixContent)\en-us\**\*.mui;
+                          $(MicrosoftWindowsAppSDKMsixContent)\zh-CN\**\*.mui;
+                          $(MicrosoftWindowsAppSDKMsixContent)\zh-TW\**\*.mui" />
+      <MicrosoftWindowsAppSDKFilesExcluded Include="@(_MuiAll)" Exclude="@(_MuiKeep)" />
+    </ItemGroup>
+    <Message Text="[TrimMui] all=@(_MuiAll->Count()) keep=@(_MuiKeep->Count()) excluded=@(MicrosoftWindowsAppSDKFilesExcluded->Count())" Importance="high" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.260224002" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
+    <!-- 必须与 net8.0 同代：9.0.x 会带入 System.Private.Windows.Core，它要求 Immutable/Metadata 9.0.0.0，
+         与 .NET 8 ref pack 的 8.0.0.0 冲突（MSB3277 ×2）。托盘图标只用 GDI+ 基础 API，8.0 足够 -->
+    <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+    <!-- Velopack 运行时：VelopackApp（安装/更新/卸载钩子）+ UpdateManager（自动更新） -->
+    <PackageReference Include="Velopack" Version="1.2.161" />
+  </ItemGroup>
+
+  <!-- 图标文件随输出一起拷贝：运行时 AppWindow.SetIcon 要从 exe 同目录读它 -->
+  <ItemGroup>
+    <None Update="Assets\VigilWatt.ico" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VigilWatt.Core\VigilWatt.Core.csproj" />
+  </ItemGroup>
+
+</Project>

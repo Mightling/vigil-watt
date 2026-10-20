@@ -1,0 +1,35 @@
+<Window
+    x:Class="VigilWatt.App.WidgetWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="VigilWatt 小组件">
+
+    <!--
+      间距常量必须与 WidgetWindow.xaml.cs 的 PadH/PadV/RowGap 一致（本文件的 ChipStack.Spacing 对应 RowGap），
+      改一个必须同步改另一个，否则窗口高度会和实际渲染对不上，滚动区底部会切行。
+      圆角分两条路（见 dev/runtime-pitfalls.md §14）：Win11 走 DWM 原生圆角，这里写 12；
+      Win10 没有该 API，完全靠窗口透明 + 本 Border 的圆角定轮廓，代码里会把半径调成 16。
+      **右键菜单走 RightTapped → Win32 原生菜单**（不是 ContextFlyout），原因见 runtime-pitfalls §18。
+    -->
+    <Border x:Name="Root"
+            CornerRadius="12"
+            Padding="16,14"
+            Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            RightTapped="Root_RightTapped"
+            PointerPressed="Root_PointerPressed"
+            PointerMoved="Root_PointerMoved"
+            PointerReleased="Root_PointerReleased"
+            PointerCaptureLost="Root_PointerReleased">
+        <!-- 一屏只显示"最多显示设备数"（WidgetMaxDevices，1~5，默认 3），多出的靠滚轮；滚动条常隐，不挤占宽度 -->
+        <ScrollViewer x:Name="ChipScroll"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      HorizontalScrollMode="Disabled"
+                      HorizontalScrollBarVisibility="Disabled"
+                      IsTabStop="False">
+            <StackPanel x:Name="ChipStack" Orientation="Vertical" Spacing="16" />
+        </ScrollViewer>
+    </Border>
+</Window>
